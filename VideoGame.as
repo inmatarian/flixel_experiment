@@ -11,6 +11,7 @@ package
     {
       super(320, 240, MenuState, 2);
       FlxG.debug = true;
+      FlxG.framerate = 30;
       trace("Starting game...")
       // help("Jump", "Shoot", "Nothing");
       // useDefaultVolumeControls(true);

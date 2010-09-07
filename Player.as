@@ -7,12 +7,12 @@ package
     [Embed(source="data/sylvia/sylvia.png")] 
     protected var PlayerImage:Class;
     
-    protected static const PLAYER_START_X:int = 100;
-    protected static const PLAYER_START_Y:int = 100;
+    protected static const PLAYER_START_X: int = 64;
+    protected static const PLAYER_START_Y: int = 64;
+    protected static const PLAYER_SPEED: Number = 80; // Experimentally Determined
 
-    protected var targetPos: FlxPoint; 
-    protected var inMovement: Boolean;
-    protected var movingDir: uint;
+    protected var xMove: Number;
+    protected var yMove: Number;
 
     public function Player()
     {
@@ -25,89 +25,55 @@ package
       addAnimation("face_right", [6, 7], 3, true);
       play("face_down");
 
-      targetPos = new FlxPoint(x, y)
-      inMovement = false;
-      moves = false
+      xMove = 0;
+      yMove = 0;
+      moves = false;
     }
-    
-    public override function update():void
+
+    protected function checkMoving(): void
     {
-      if (!inMovement) {
-        if(FlxG.keys.LEFT)
-        {
-          facing = LEFT;
-          movingDir = LEFT;
-          play("face_left");
-          targetPos.x -= 16;
-          inMovement = true;
-        }
-        else if(FlxG.keys.RIGHT)
-        {
-          facing = RIGHT;
-          movingDir = RIGHT;
-          play("face_right");
-          targetPos.x += 16;
-          inMovement = true;
-        }
-        else if(FlxG.keys.UP)
-        {
-          facing = UP;
-          movingDir = UP;
-          play("face_up");
-          targetPos.y -= 16;
-          inMovement = true;
-        }
-        else if(FlxG.keys.DOWN)
-        {
-          facing = DOWN;
-          movingDir = DOWN;
-          play("face_down");
-          targetPos.y += 16;
-          inMovement = true;
-        }
-      }
+      var goDist: Number = PLAYER_SPEED * FlxG.elapsed;
+      var xDist: Number = ( xMove < 0 ? -1 : ( xMove > 0 ? 1 : 0 ) ) * goDist;
+      if ( Math.abs( xDist ) > Math.abs( xMove ) ) xDist = xMove;
+      x += xDist;
+      xMove -= xDist;
+      var yDist: Number = ( yMove < 0 ? -1 : ( yMove > 0 ? 1 : 0 ) ) * goDist;
+      if ( Math.abs( yDist ) > Math.abs( yMove ) ) yDist = yMove;
+      y += yDist;
+      yMove -= yDist;
+    }
 
-      if ( inMovement )
+    public function walk( dir: int ): void
+    {
+      if ( xMove != 0 || yMove != 0 ) return;
+
+      facing = dir;
+      switch ( dir )
       {
-        var dist:int = FlxG.elapsed * 100;
-        switch ( movingDir )
-        {
-          case LEFT:
-            x -= dist;
-            if ( x < targetPos.x ) {
-              x = targetPos.x;
-              inMovement = false;
-            }
-            break;
-
-          case RIGHT:
-            x += dist;
-            if ( x > targetPos.x ) {
-              x = targetPos.x;
-              inMovement = false;
-            }
-            break;
-
-          case UP:
-            y -= dist;
-            if ( y < targetPos.y ) {
-              y = targetPos.y;
-              inMovement = false;
-            }
-            break;
-
-          case DOWN:
-            y += dist;
-            if ( y > targetPos.y ) {
-              y = targetPos.y;
-              inMovement = false;
-            }
-            break;
-
-          default: break;
-        }
+        case LEFT:
+          xMove = -16;
+          play("face_left");
+          break;
+        case RIGHT:
+          xMove = 16;
+          play("face_right");
+          break;
+        case UP:
+          yMove = -16;
+          play("face_up");
+          break;
+        case DOWN:
+          yMove = 16;
+          play("face_down");
+          break;
+        default:
+          break;
       }
+    }
 
+    public override function update(): void
+    {
+      checkMoving();
       super.update();
     }
 

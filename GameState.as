@@ -13,26 +13,38 @@ package
 
     protected var player:Player = null;
     protected var floorLayer:FlxTilemap = null;
-    protected var objectLayer:TmxLayer = null;
+    protected var ceilingLayer:FlxTilemap = null;
+    protected var objectLayer:FlxTilemap = null;
     
     public override function create(): void
     {
-      // levelBlocks.add(this.add(new FlxBlock(0,640-24,640,8,TechTilesImage)));
-      
       var bytes:ByteArray = new WaymapTMX();
       var waymapxml:XML = new XML(bytes.readUTFBytes(bytes.length));
       var tmxloader:TmxLoader = new TmxLoader( waymapxml );
+
       var csv:String = tmxloader.layers['Floor'].toCSV();
-      trace( csv );
-
-      objectLayer = tmxloader.layers['Collision'];
-
       floorLayer = new FlxTilemap();
       floorLayer.loadMap( csv, WaywardTiles, 16, 16 );
+      floorLayer.solid = false;
       add( floorLayer );
 
+      csv = tmxloader.layers['Ceiling'].toCSV();
+      ceilingLayer = new FlxTilemap();
+      ceilingLayer.loadMap( csv, WaywardTiles, 16, 16 );
+      ceilingLayer.solid = false;
+      add( ceilingLayer );
+
+      var objTmx: TmxLayer = tmxloader.layers['Collision'];
+      csv = objTmx.toCollisionWorthyCSV();
+      trace( csv );
+      objectLayer = new FlxTilemap();
+      objectLayer.loadMap( csv, WaywardTiles, 16, 16 );
+      objectLayer.visible = false;
+      objectLayer.follow();
+      add( objectLayer );
+
       player = new Player();
-      var landingZone: Object = objectLayer.find(16);
+      var landingZone: Object = objTmx.find(16);
       if (landingZone) {
         player.x = landingZone.x * 16;
         player.y = landingZone.y * 16;
@@ -42,6 +54,7 @@ package
       FlxG.follow(player, 8);
     }
 
+/*
     public function blocked( spr: FlxSprite, dir: int ): Boolean
     {
       var xTest: int = Math.floor( spr.x / 16 );
@@ -57,32 +70,12 @@ package
       trace( block );
       return block;
     }
-    
-    protected function checkControls(): void
-    {
-      if (FlxG.keys.LEFT && !blocked(player, FlxSprite.LEFT) )
-      {
-        player.walk( FlxSprite.LEFT );
-      }
-      else if (FlxG.keys.RIGHT && !blocked(player, FlxSprite.RIGHT) )
-      {
-        player.walk( FlxSprite.RIGHT );
-      }
-      else if (FlxG.keys.UP && !blocked(player, FlxSprite.UP) )
-      {
-        player.walk( FlxSprite.UP );
-      }
-      else if (FlxG.keys.DOWN && !blocked(player, FlxSprite.DOWN) )
-      {
-        player.walk( FlxSprite.DOWN );
-      }
-    }
-
+*/
+  
     public override function update(): void
     {
-      checkControls();
       super.update();
-      // FlxG.collideArray(levelBlocks, player);
+      collide();
     }
 
   }

@@ -81,11 +81,22 @@ package {
 
     public function toCSV(): String
     {
+      return toAdjustedCSV(false, 0);
+    }
+
+    public function toCollisionWorthyCSV(): String
+    {
+      return toAdjustedCSV(true, 15);
+    }
+
+    protected function toAdjustedCSV( clamp: Boolean, clampId: int ): String
+    {
       trace( tiles.length );
       var layer:String = "";
       var x:uint = 0;
       var newl:Boolean = true;
       var i:uint = 0;
+      var val:uint = 0;
       while ( i < tiles.length ) {
         if ( newl ) {
           newl = false;
@@ -93,7 +104,9 @@ package {
         else {
           layer += ",";
         }
-        layer += tiles[i];
+        val = tiles[i];
+        if ( clamp && val != clampId ) val = 0;
+        layer += val;
         i += 1;
         x += 1;
         if ( x == width ) {

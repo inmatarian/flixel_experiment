@@ -11,9 +11,6 @@ package
     protected static const PLAYER_START_Y: int = 64;
     protected static const PLAYER_SPEED: Number = 80; // Experimentally Determined
 
-    protected var xMove: Number;
-    protected var yMove: Number;
-
     public function Player()
     {
       super(PLAYER_START_X, PLAYER_START_Y);
@@ -25,45 +22,50 @@ package
       addAnimation("face_right", [6, 7], 3, true);
       play("face_down");
 
-      xMove = 0;
-      yMove = 0;
-      moves = false;
+      drag.x = PLAYER_SPEED * 10;
+      drag.y = PLAYER_SPEED * 10;
+      maxVelocity.x = PLAYER_SPEED;
+      maxVelocity.y = PLAYER_SPEED;
+      moves = true;
     }
 
-    protected function checkMoving(): void
+    protected function checkControls(): void
     {
-      var goDist: Number = PLAYER_SPEED * FlxG.elapsed;
-      var xDist: Number = ( xMove < 0 ? -1 : ( xMove > 0 ? 1 : 0 ) ) * goDist;
-      if ( Math.abs( xDist ) > Math.abs( xMove ) ) xDist = xMove;
-      x += xDist;
-      xMove -= xDist;
-      var yDist: Number = ( yMove < 0 ? -1 : ( yMove > 0 ? 1 : 0 ) ) * goDist;
-      if ( Math.abs( yDist ) > Math.abs( yMove ) ) yDist = yMove;
-      y += yDist;
-      yMove -= yDist;
+      acceleration.x = 0;
+      acceleration.y = 0;
+      if (FlxG.keys.LEFT) {
+        walk( FlxSprite.LEFT );
+      }
+      else if (FlxG.keys.RIGHT) {
+        walk( FlxSprite.RIGHT );
+      }
+      else if (FlxG.keys.UP) {
+        walk( FlxSprite.UP );
+      }
+      else if (FlxG.keys.DOWN) {
+        walk( FlxSprite.DOWN );
+      }
     }
 
     public function walk( dir: int ): void
     {
-      if ( xMove != 0 || yMove != 0 ) return;
-
       facing = dir;
       switch ( dir )
       {
         case LEFT:
-          xMove = -16;
+          acceleration.x = -drag.x;
           play("face_left");
           break;
         case RIGHT:
-          xMove = 16;
+          acceleration.x = drag.x;
           play("face_right");
           break;
         case UP:
-          yMove = -16;
+          acceleration.y = -drag.y;
           play("face_up");
           break;
         case DOWN:
-          yMove = 16;
+          acceleration.y = drag.y;
           play("face_down");
           break;
         default:
@@ -73,7 +75,7 @@ package
 
     public override function update(): void
     {
-      checkMoving();
+      checkControls();
       super.update();
     }
 

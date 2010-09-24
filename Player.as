@@ -22,6 +22,11 @@ package
       addAnimation("face_right", [6, 7], 3, true);
       play("face_down");
 
+      width = 14
+      height = 14
+      offset.x = 1
+      offset.y = 1
+
       drag.x = PLAYER_SPEED * 10;
       drag.y = PLAYER_SPEED * 10;
       maxVelocity.x = PLAYER_SPEED;
@@ -31,8 +36,6 @@ package
 
     protected function checkControls(): void
     {
-      acceleration.x = 0;
-      acceleration.y = 0;
       if (FlxG.keys.LEFT) {
         walk( FlxSprite.LEFT );
       }
@@ -45,6 +48,10 @@ package
       else if (FlxG.keys.DOWN) {
         walk( FlxSprite.DOWN );
       }
+      else {
+        acceleration.x = 0;
+        acceleration.y = 0;
+      }
     }
 
     public function walk( dir: int ): void
@@ -54,17 +61,21 @@ package
       {
         case LEFT:
           acceleration.x = -drag.x;
+          acceleration.y = 0;
           play("face_left");
           break;
         case RIGHT:
           acceleration.x = drag.x;
+          acceleration.y = 0;
           play("face_right");
           break;
         case UP:
+          acceleration.x = 0;
           acceleration.y = -drag.y;
           play("face_up");
           break;
         case DOWN:
+          acceleration.x = 0;
           acceleration.y = drag.y;
           play("face_down");
           break;

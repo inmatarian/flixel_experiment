@@ -14,18 +14,22 @@ package
     [Embed(source="data/title_wayward.png")]
     protected var TitleLargeLogo:Class;
 
+    [Embed(source="data/song1.mp3")]
+    protected var TitleSongMP3:Class;
+
     protected var cursorSprite:FlxSprite;
     
-    public function MenuState()
+    public override function create(): void
     {
-      trace("Entering MenuState")
+      trace("Entering MenuState");
       cursorSprite = new FlxSprite( 160, 120 );
       cursorSprite.createGraphic(16, 16, 0xffefdf);
       this.add(new FlxSprite(  0,  0, TitleVignette));
       this.add(new FlxSprite(118, 26, TitleSmallLogo));
       this.add(new FlxSprite( 88, 42, TitleLargeLogo));
-      this.add(cursorSprite)
-      trace("Done constructor MenuState")
+      this.add(cursorSprite);
+      FlxG.playMusic( TitleSongMP3 );
+      trace("Done constructor MenuState");
     }
     
     public override function update():void

@@ -36,7 +36,6 @@ package
 
       var objTmx: TmxLayer = tmxloader.layers['Collision'];
       csv = objTmx.toCollisionWorthyCSV();
-      trace( csv );
       objectLayer = new FlxTilemap();
       objectLayer.loadMap( csv, WaywardTiles, 16, 16 );
       objectLayer.visible = false;

@@ -28,12 +28,6 @@ package
       floorLayer.solid = false;
       add( floorLayer );
 
-      csv = tmxloader.layers['Ceiling'].toCSV();
-      ceilingLayer = new FlxTilemap();
-      ceilingLayer.loadMap( csv, WaywardTiles, 16, 16 );
-      ceilingLayer.solid = false;
-      add( ceilingLayer );
-
       var objTmx: TmxLayer = tmxloader.layers['Collision'];
       csv = objTmx.toCollisionWorthyCSV();
       objectLayer = new FlxTilemap();
@@ -49,6 +43,12 @@ package
         player.y = landingZone.y * 16;
       }
       add(player);
+
+      csv = tmxloader.layers['Ceiling'].toCSV();
+      ceilingLayer = new FlxTilemap();
+      ceilingLayer.loadMap( csv, WaywardTiles, 16, 16 );
+      ceilingLayer.solid = false;
+      add( ceilingLayer );
 
       FlxG.follow(player, 8);
     }
